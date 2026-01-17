@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Character Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: chocolate;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background:cadetblue;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .max-chars {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea.limit-exceeded {
+            border-color: #e74c3c;
+        }
+
+        .counter-info {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-count {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .char-count.warning {
+            color: #e67e22;
+            font-weight: 600;
+        }
+
+        .char-count.exceeded {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .warning-message {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 10px 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .warning-message.show {
+            display: block;
+            animation: shake 0.3s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Message Composer</h1>
+        <p class="max-chars">Maximum: <strong>200 characters</strong></p>
+        
+        <textarea 
+            id="messageInput" 
+            placeholder="Type your message here..."
+            maxlength="200"
+        ></textarea>
+        
+        <div class="counter-info">
+            <span id="charCount" class="char-count">0/200 characters</span>
+            <span id="remaining" class="char-count">200 remaining</span>
+        </div>
+        
+        <div id="warningMessage" class="warning-message">
+            ⚠️ Character limit reached! No more characters allowed.
+        </div>
+    </div>
+
+    <script>
+        const textarea = document.getElementById('messageInput');
+        const charCount = document.getElementById('charCount');
+        const remaining = document.getElementById('remaining');
+        const warningMessage = document.getElementById('warningMessage');
+        const MAX_CHARS = 200;
+
+        textarea.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            const remainingChars = MAX_CHARS - currentLength;
+            
+            // Update character count display
+            charCount.textContent = `${currentLength}/${MAX_CHARS} characters`;
+            remaining.textContent = `${remainingChars} remaining`;
+            
+            // Reset all styling
+            charCount.classList.remove('warning', 'exceeded');
+            remaining.classList.remove('warning', 'exceeded');
+            textarea.classList.remove('limit-exceeded');
+            warningMessage.classList.remove('show');
+            
+            // Apply warning styling when approaching limit (last 20 characters)
+            if (remainingChars <= 20 && remainingChars > 0) {
+                charCount.classList.add('warning');
+                remaining.classList.add('warning');
+            }
+            
+            // Show warning when limit is reached
+            if (currentLength >= MAX_CHARS) {
+                charCount.classList.add('exceeded');
+                remaining.classList.add('exceeded');
+                textarea.classList.add('limit-exceeded');
+                warningMessage.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>
